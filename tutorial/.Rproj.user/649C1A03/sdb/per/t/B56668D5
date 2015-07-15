@@ -1,0 +1,18 @@
+{
+    "contents" : "\\documentclass{article}\n% this is a comment\n\\usepackage{graphicx}\n\\DeclareGraphicsExtensions{.jpg, .png}\n\n\\newcommand{\\dataframe}{\\textt{data.frame}}\n\n\\author{S. Duprey}\n\\title{A simple article}\n\\date{July 17th, 2015}\n\n\\begin{document}\n\\maketitle\n\\tableofcontents\n\\section{Getting started}\n\\label{sec:GettingStarted}\nThis is the first section of our article. We will only talk about \\dataframe{}s.\n\\section{More information}\n\\label{sec:MoreInfo}\nIn section\n\n\\end{document}",
+    "created" : 1436962713045.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3941718551",
+    "id" : "B56668D5",
+    "lastKnownWriteTime" : 1436963174,
+    "path" : "~/R/tutorial/latex.Rnw",
+    "project_path" : "latex.Rnw",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "sweave"
+}

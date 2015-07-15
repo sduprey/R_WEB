@@ -1,0 +1,18 @@
+{
+    "contents" : "require(xgboost)\n\n\nrequire(methods)\n\n\nrequire(devtools)\n",
+    "created" : 1436446242297.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2698468110",
+    "id" : "EFAE3F4A",
+    "lastKnownWriteTime" : 1436446546,
+    "path" : "~/R/OTTO_CHALLENGE/main_script.R",
+    "project_path" : "main_script.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

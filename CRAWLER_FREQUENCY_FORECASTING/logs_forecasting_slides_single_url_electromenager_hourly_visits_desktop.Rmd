@@ -1,0 +1,155 @@
+% Logs frequency single URL solde number of visits desktop bot forecasting
+% S.Duprey
+% July 15th, 2015
+
+### Loading and preprocessing the logs data ( single URL soldes number of visits per hour google bot / Internet Users )
+```{r data-preprocessing}
+my_path <- "D:\\My_Data\\My_Crawler_Frequency\\electromenager.log"
+crawling_events <- read.csv(file=my_path,header=FALSE, sep="|")
+
+# PREPROCESSING THE DATA
+# Filtering the data to split internet users from google bots
+require(stringr)
+
+my_google_filter = str_detect(crawling_events$V11,ignore.case("googlebot"))
+my_blank_filter = crawling_events$V11 == ""
+
+filtered_crawling_events<-crawling_events[my_google_filter ,]
+internautes_filtered_crawling_events<-crawling_events[!my_google_filter & !my_blank_filter ,]
+
+names(filtered_crawling_events) <- c("Timestamp","Hit","N1","N2","N3","N4","N5","N6","TrackedUrl","N7","UserAgent" )
+names(internautes_filtered_crawling_events) <- c("Timestamp","Hit","N1","N2","N3","N4","N5","N6","TrackedUrl","N7","UserAgent" )
+
+
+filtered_crawling_events$Timestamp <- str_sub(string=filtered_crawling_events$Timestamp, start=31, end=50)
+internautes_filtered_crawling_events$Timestamp <- str_sub(string=internautes_filtered_crawling_events$Timestamp, start=31, end=50)
+
+filtered_crawling_events$Timestamp <- as.POSIXct(filtered_crawling_events$Timestamp)
+internautes_filtered_crawling_events$Timestamp <- as.POSIXct(internautes_filtered_crawling_events$Timestamp)
+
+
+filtered_crawling_events$numeric_timestamp = as.numeric(filtered_crawling_events$Timestamp)
+internautes_filtered_crawling_events$numeric_timestamp = as.numeric(internautes_filtered_crawling_events$Timestamp)
+
+
+# getting the numeric timestamp passing time
+my_google_numeric_vector = filtered_crawling_events$numeric_timestamp
+my_internautes_numeric_vector = internautes_filtered_crawling_events$numeric_timestamp
+
+# sorting the arriving timestamps
+my_google_numeric_vector = sort(my_google_numeric_vector, decreasing = FALSE)
+my_internautes_numeric_vector = sort(my_internautes_numeric_vector, decreasing = FALSE)
+
+# no need to visualize the data
+####plot(my_google_numeric_vector, rep(1, NROW(my_google_numeric_vector)))
+####plot(my_internautes_numeric_vector, rep(1, NROW(my_internautes_numeric_vector)))
+```
+
+### Meshing time and computing the number of visits per mesh for internet users and bots
+```{r data-processing}
+# Meshing time and computing the number of visits per mesh for internet users and bots
+begining_time <- min(c(min(my_google_numeric_vector),min(my_internautes_numeric_vector)))
+ending_time <- max(c(max(my_google_numeric_vector),max(my_internautes_numeric_vector)))
+my_time_meshing_dimension <- max(diff(my_google_numeric_vector))/6
+# we go for 100 time periods
+mesh_beginning_time=begining_time
+i<-1
+my_google_bot_number_of_passings=c()
+my_internautes_number_of_passings=c()
+while(mesh_beginning_time <= ending_time)
+{
+  mesh_beginning_time <- begining_time+(i-1)*my_time_meshing_dimension
+  #print(mesh_beginning_time)
+  mesh_ending_time <- begining_time+i*my_time_meshing_dimension
+  #print(mesh_ending_time)
+  my_google_bot_number_of_passing = sum(((my_google_numeric_vector >=  mesh_beginning_time) & (my_google_numeric_vector <=  mesh_ending_time)))
+  print("Bot passings :")
+  print(my_google_bot_number_of_passing)
+  my_google_bot_number_of_passings<-c(my_google_bot_number_of_passing,my_google_bot_number_of_passings)
+  print("Internautes passings")
+  my_internautes_number_of_passing = sum(((my_internautes_numeric_vector >=  mesh_beginning_time) & (my_internautes_numeric_vector <=  mesh_ending_time)))
+  print(my_internautes_number_of_passing)
+  my_internautes_number_of_passings<-c(my_internautes_number_of_passing,my_internautes_number_of_passings)
+  i<-i+1
+}
+```
+
+
+### VISUALIZING BOTH SERIES ON A YY PLOT
+```{r data-visualization}
+require(pracma)
+my_series_df <- data.frame(Internautes =my_internautes_number_of_passings, Bots = my_google_bot_number_of_passings, Time_Periods = 1:NROW(my_google_bot_number_of_passings) )
+plotyy(my_series_df$Time_Periods,my_series_df$Internautes, my_series_df$Time_Periods, my_series_df$Bots, main = "Internet Users / Google Bot")
+```
+
+### FORECASTING THE HOURLY NUMBER OF VISITS FOR THE SOLDES URL
+```{r data-model}
+# trying here to predict the crawling time hourly frequency hour by hour
+my_frequency_vector <-ts(my_series_df$Bots)
+
+# Backtesting the one next day frequency for  hourly frequency hour by hour for a single URL
+begining_times = 10 ;
+arima_prediction = c(1:length(my_frequency_vector))
+arima_prediction[1:begining_times]<- my_frequency_vector[1:begining_times]
+
+constant_prediction = c(1:length(my_frequency_vector))
+constant_prediction[1:begining_times]<- my_frequency_vector[1:begining_times]
+
+linear_prediction = c(1:length(my_frequency_vector))
+linear_prediction[1:begining_times]<- my_frequency_vector[1:begining_times]
+
+for(i in begining_times:length(my_frequency_vector)) {
+  training_data<-my_frequency_vector[1:i]
+  feature = 1:i
+  # linear prediction
+  new_data <- data.frame(feature = 1:(NROW(training_data)+1))
+  my_linear_prediction<-predict(lm(training_data ~ feature), new_data, se.fit = TRUE)
+  #plot(my_linear_prediction$fit,training_data )
+  #par(new=T)
+  #plot(training_data )
+  
+  # ARIMA prediction
+  model <- arima(training_data, order=c(1,2,1)) 
+  next_day_prediction <- predict(model, n.ahead=1)
+
+  # filling up the forecasting series
+  arima_prediction[i] <- as.integer(next_day_prediction$pred[1])
+  constant_prediction[i]=mean(training_data)
+  linear_prediction[i] <- tail(my_linear_prediction$fit, n=1)
+}
+```
+
+
+```{r model-performance-plot,dev='png'}
+my_results_df <- data.frame(ARIMA_Prediction =arima_prediction, Constant_Prediction = constant_prediction, Linear_Prediction = linear_prediction, Entry = my_frequency_vector, Time_Periods = 1:NROW(my_frequency_vector))
+
+# plotting the two time series together (only the points) for the arima modeling
+require(ggplot2)
+g <- ggplot(my_results_df, aes(x=Time_Periods, y=Entry))
+g + geom_smooth(method="lm") + geom_point(aes(x=Time_Periods,y=Entry,color='real data')) + geom_point(aes(x=Time_Periods,y=ARIMA_Prediction,color='ARIMA forecast'))+ geom_point(aes(x=Time_Periods,y=Constant_Prediction,color='Constant forecast')) + geom_point(aes(x=Time_Periods,y=Linear_Prediction,color='Linear forecast'))
+```
+
+### computing the root mean squared error for each errors
+```{r rmse-model-performance}
+# computing the root mean squared error
+arima_rmse_constant = sqrt( mean( (my_results_df$ARIMA_Prediction - my_results_df$Entry)^2, na.rm = TRUE) )
+sprintf("ARIMA RMSE for ARIMA model %f", arima_rmse_constant)
+
+constant_rmse_constant = sqrt( mean( (my_results_df$Constant_Prediction - my_results_df$Entry)^2, na.rm = TRUE) )
+sprintf("Constant RMSE for constant model %f", constant_rmse_constant)
+
+linear_rmse_constant = sqrt( mean( (my_results_df$Linear_Prediction - my_results_df$Entry)^2, na.rm = TRUE) )
+sprintf("Linear RMSE for linear model %f", linear_rmse_constant)
+
+```
+
+```{r cross-correlation-bot-internet-users}
+my_bot_serie = my_series_df$Bots
+my_internet_users_serie = my_series_df$Internautes 
+####acf(my_bot_serie)
+####acf(my_internet_users_serie)
+ccf(my_internet_users_serie,my_bot_serie)
+
+```
+
+

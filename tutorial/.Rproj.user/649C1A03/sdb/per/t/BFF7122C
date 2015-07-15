@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1435760117258.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BFF7122C",
+    "lastKnownWriteTime" : 30399714103066735,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "osnfcz2u85",
+        "caption" : "countryJoined",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=countryJoined&cache_key=osnfcz2u85",
+        "displayedObservations" : 249,
+        "environment" : "",
+        "object" : "countryJoined",
+        "totalObservations" : 249,
+        "variables" : 11
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

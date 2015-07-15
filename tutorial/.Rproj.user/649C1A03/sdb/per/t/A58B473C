@@ -1,0 +1,18 @@
+{
+    "contents" : "A simple Site\n====================\n\n# Header 1\n\n## Header 2\n\n_this will be italics_\n__this will be bold__\n\n* Item 1\n* Second item\n* Last Item\n\n[My_Website](http://www.github.com)\n\n\n```{r addition}\n1+1\n```\n\n\n```{r more-complex}\nrequire(ggplot2)\ndata(diamonds)\nhead(diamonds)\n```\n\n\n```{r a-simple-plot,dev='png'}\nggplot(diamonds, aes(x=carat, y=price, color=color))+geom_point()\n```",
+    "created" : 1436963177235.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "450035897",
+    "id" : "A58B473C",
+    "lastKnownWriteTime" : 1436963725,
+    "path" : "~/R/tutorial/markdown.Rmd",
+    "project_path" : "markdown.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

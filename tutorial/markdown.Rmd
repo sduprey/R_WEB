@@ -1,0 +1,32 @@
+A simple Site
+====================
+
+# Header 1
+
+## Header 2
+
+_this will be italics_
+__this will be bold__
+
+* Item 1
+* Second item
+* Last Item
+
+[My_Website](http://www.github.com)
+
+
+```{r addition}
+1+1
+```
+
+
+```{r more-complex}
+require(ggplot2)
+data(diamonds)
+head(diamonds)
+```
+
+
+```{r a-simple-plot,dev='png'}
+ggplot(diamonds, aes(x=carat, y=price, color=color))+geom_point()
+```

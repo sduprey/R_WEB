@@ -1,0 +1,22 @@
+\documentclass{article}
+% this is a comment
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.jpg, .png}
+
+\newcommand{\dataframe}{\textt{data.frame}}
+
+\author{S. Duprey}
+\title{A simple article}
+\date{July 17th, 2015}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Getting started}
+\label{sec:GettingStarted}
+This is the first section of our article. We will only talk about \dataframe{}s.
+\section{More information}
+\label{sec:MoreInfo}
+In section
+
+\end{document}

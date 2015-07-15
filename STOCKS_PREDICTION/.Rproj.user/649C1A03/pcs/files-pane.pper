@@ -1,0 +1,9 @@
+{
+    "path" : "~/R/STOCKS_PREDICTION",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
